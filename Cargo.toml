@@ -1,6 +1,6 @@
 [package]
-name = "game2048"
-version = "0.1.1"
+name = "sort-puzzle"
+version = "0.1.0"
 authors = ["Aster <galaster@foxmail.com>"]
 description = "binary tree of n variables where the parent node represents a function and the child node represents a value."
 edition = "2018"
@@ -12,6 +12,4 @@ exclude = ["/tests/*", "/.idea/*", "/benches/*"]
 [dependencies]
 itertools = "0.9"
 rand = "0.7"
-ndarray = "0.13"
-convert-base = "1.0"
 tuple-conv = "1.0"

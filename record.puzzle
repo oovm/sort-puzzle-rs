@@ -1,0 +1,14 @@
+game = ball-sort-puzzle
+mode = 3 * 5 + 2
+time = 0
+move = 0
+
+[board]
+1, 2, 3, 4
+
+
+
+
+[steps]
+1, 2
+2, 3
