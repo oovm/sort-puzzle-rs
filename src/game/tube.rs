@@ -4,13 +4,19 @@ use std::{
 };
 
 pub trait Tube {
+    fn size(&self) -> usize;
     fn empty(&self) -> bool;
     fn sorted(&self) -> bool;
     fn full(&self) -> bool;
+    fn last(&self) -> u8;
     fn pop(&mut self) -> u8;
     fn push(&mut self, other: u8);
+    fn can_move<T: Tube>(&mut self, other: &mut T) -> bool {
+        !self.empty() && !other.full() && self.last() == other.last()
+    }
     fn move_to<T: Tube>(&mut self, other: &mut T) {
-        assert!(!self.empty() && !other.full());
+        // assert!(!self.empty() && !other.full());
+        assert!(!self.can_move(other));
         other.push(self.pop())
     }
 }
@@ -30,6 +36,10 @@ pub struct Tube4(u8, u8, u8, u8);
 // }
 
 impl Tube for Tube4 {
+    fn size(&self) -> usize {
+        return 4
+    }
+
     fn empty(&self) -> bool {
         if self.0 == 0 && self.1 == 0 && self.2 == 0 && self.3 == 0 { true } else { false }
     }
@@ -52,7 +62,26 @@ impl Tube for Tube4 {
     }
 
     // Crazy hardcoded
+    fn last(&self) -> u8 {
+        assert!(!self.empty());
+        if self.3 != 0 {
+            return self.3.copy();
+        }
+        else if self.2 != 0 {
+            return self.2.copy();
+        }
+        else if self.1 != 0 {
+            return self.1.copy();
+        }
+        else if self.1 != 0 {
+            return self.0.copy();
+        }
+        unreachable!()
+    }
+
+    // Crazy hardcoded
     fn pop(&mut self) -> u8 {
+        assert!(!self.empty());
         let mut out = 0;
         if self.3 != 0 {
             swap(&mut self.3, &mut out);
@@ -75,6 +104,7 @@ impl Tube for Tube4 {
 
     // Crazy hardcoded
     fn push(&mut self, other: u8) {
+        assert!(!self.full());
         if self.0 == 0 {
             self.0 = other;
             return;

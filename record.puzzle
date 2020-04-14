@@ -1,5 +1,6 @@
 game = ball-sort-puzzle
-mode = 3 * 5 + 2
+# colors * tubes + empties
+mode = 3 * 4 + 2
 time = 0
 move = 0
 
