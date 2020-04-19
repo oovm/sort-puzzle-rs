@@ -3,8 +3,8 @@ use std::{
     mem::swap,
 };
 
-pub trait Tube {
-    fn size(&self) -> usize;
+pub trait Tube: Default + Debug {
+    fn size() -> usize;
     fn empty(&self) -> bool;
     fn sorted(&self) -> bool;
     fn full(&self) -> bool;
@@ -15,13 +15,12 @@ pub trait Tube {
         !self.empty() && !other.full() && self.last() == other.last()
     }
     fn move_to<T: Tube>(&mut self, other: &mut T) {
-        // assert!(!self.empty() && !other.full());
         assert!(!self.can_move(other));
         other.push(self.pop())
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub struct Tube4(u8, u8, u8, u8);
 // pub struct Tube4(u32);
 // impl Tube4 {
@@ -36,8 +35,8 @@ pub struct Tube4(u8, u8, u8, u8);
 // }
 
 impl Tube for Tube4 {
-    fn size(&self) -> usize {
-        return 4
+    fn size() -> usize {
+        return 4;
     }
 
     fn empty(&self) -> bool {
@@ -65,16 +64,16 @@ impl Tube for Tube4 {
     fn last(&self) -> u8 {
         assert!(!self.empty());
         if self.3 != 0 {
-            return self.3.copy();
+            return self.3;
         }
         else if self.2 != 0 {
-            return self.2.copy();
+            return self.2;
         }
         else if self.1 != 0 {
-            return self.1.copy();
+            return self.1;
         }
         else if self.1 != 0 {
-            return self.0.copy();
+            return self.0;
         }
         unreachable!()
     }
@@ -127,6 +126,7 @@ impl Tube for Tube4 {
 
 impl Debug for Tube4 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        f.debug_tuple("Tube").field(&self.0).field(&self.1).field(&self.2).field(&self.3).finish()
+        // f.debug_tuple("Tube").field(&self.0).field(&self.1).field(&self.2).field(&self.3).finish()
+        write!(f, "Tube({}, {}, {}, {})", self.0, self.1, self.2, self.3)
     }
 }
