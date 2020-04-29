@@ -1,6 +1,10 @@
+use itertools::Itertools;
 use sort_puzzle::{Game, Tube4};
+use std::iter::repeat;
 
 #[test]
 fn test() {
-    let (mut _game, mut _state) = Game::new::<Tube4>(5, 2);
+    let (game, state) = Game::new::<Tube4>(5, 2);
+    println!("{:#?}", state);
+    println!("{:#?}", game.measure(&state));
 }

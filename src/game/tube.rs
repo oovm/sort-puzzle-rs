@@ -3,8 +3,11 @@ use std::{
     mem::swap,
 };
 
-pub trait Tube: Default + Debug {
+pub trait Tube: Default + Debug + Clone {
+    //
     fn size() -> usize;
+    fn new(raw: &[u8]) -> Self;
+    //
     fn empty(&self) -> bool;
     fn sorted(&self) -> bool;
     fn full(&self) -> bool;
@@ -20,8 +23,10 @@ pub trait Tube: Default + Debug {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, PartialEq, Eq, Copy, Clone)]
 pub struct Tube4(u8, u8, u8, u8);
+pub struct TubeN(Vec<u8>);
+
 // pub struct Tube4(u32);
 // impl Tube4 {
 // pub fn encode(s: (u8, u8, u8, u8)) -> Self {
@@ -37,6 +42,11 @@ pub struct Tube4(u8, u8, u8, u8);
 impl Tube for Tube4 {
     fn size() -> usize {
         return 4;
+    }
+
+    fn new(raw: &[u8]) -> Self {
+        assert!(raw.len() >= 4);
+        Self(raw[0], raw[1], raw[2], raw[3])
     }
 
     fn empty(&self) -> bool {

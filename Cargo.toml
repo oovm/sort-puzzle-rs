@@ -12,4 +12,4 @@ exclude = ["/tests/*", "/.idea/*", "/benches/*"]
 [dependencies]
 itertools = "0.9"
 rand = "0.7"
-tuple-conv = "1.0"
+# tuple-conv = "1.0"

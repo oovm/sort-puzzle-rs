@@ -1,31 +1,66 @@
 use crate::Tube;
 use itertools::Itertools;
-use std::fmt::{self, Display, Formatter};
+use rand::{seq::SliceRandom, thread_rng};
+use std::{
+    fmt::{self, Display, Formatter},
+    iter::repeat,
+};
 
 #[derive(Debug, Default)]
 pub struct Game {
-    time: usize,
-    rank: usize,
-    empty: usize,
-    colors: usize,
-    records: Vec<(usize, usize)>,
+    pub time: usize,
+    pub rank: usize,
+    pub empty: usize,
+    pub colors: usize,
+    pub records: Vec<(usize, usize)>,
 }
 
 impl Game {
     pub fn new<T: Tube>(c: usize, e: usize) -> (Self, Vec<T>) {
         let new = Self { time: 0, rank: T::size(), empty: e, colors: c, records: vec![] };
-        let empties = (0..e).map(|_| T::default()).collect_vec();
-        println!("new: {:#?}", new);
-        println!("empties: {:#?}", empties);
-        unimplemented!()
+        let mut store = Vec::with_capacity(T::size() * c);
+        let mut out = Vec::with_capacity(c + e);
+        for mut i in (1u8..=c as u8).map(|e| repeat(e).take(T::size()).collect_vec()) {
+            store.append(&mut i)
+        }
+        store.shuffle(&mut thread_rng());
+        for i in store.chunks(T::size()) {
+            out.push(T::new(i));
+        }
+        out.append(&mut (0..e).map(|_| T::default()).collect_vec());
+        (new, out)
     }
     pub fn update<T: Tube>(&mut self, _tubes: &mut T) {
         unimplemented!()
     }
-    pub fn measure<T: Tube>(&self, _tubes: &[T]) {}
+    pub fn measure<T: Tube>(&self, tubes: &[T]) -> usize {
+        let mut score = 0;
+        let mut cnt = 1;
+        for tube in tubes {
+            if tube.empty() {
+                score += 10
+            }
+            else {
+                let mut tube = (*tube).clone();
+                let mut c1 = tube.pop();
+                while !tube.empty() {
+                    let c2 = tube.pop();
+                    if c1 == c2 {
+                        cnt += 1
+                    }
+                    else {
+                        c1 = c2;
+                        cnt = 1
+                    }
+                }
+                score += 5 * cnt
+            }
+        }
+        return score;
+    }
     pub fn win<T: Tube>(&self, tubes: &[T]) -> bool {
-        for tubes in tubes {
-            if !tubes.empty() && (!tubes.full() || !tubes.sorted()) {
+        for tube in tubes {
+            if !tube.empty() && (!tube.full() || !tube.sorted()) {
                 return false;
             }
         }
@@ -35,9 +70,8 @@ impl Game {
         unimplemented!()
     }
     pub fn dump<T: Tube>(&self, tubes: &[T]) -> String {
-        let mut out = String::from("#? sort-puzzle\n");
-
-        out.push_str("[puzzle]\n");
+        let mut out = format!("{:?}", self);
+        let mut _insert = String::from("[puzzle]\n");
         for tube in tubes {
             out.push_str(&format!("{:?}", tube));
         }
@@ -47,6 +81,7 @@ impl Game {
 
 impl Display for Game {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        unimplemented!()
+        write!(f, "game = sort-puzzle\n")?;
+        write!(f, "mode = {} * {} + {}", self.colors, self.rank, self.empty)
     }
 }
