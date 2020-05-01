@@ -58,9 +58,27 @@ impl Game {
         }
         return score;
     }
+
+    #[rustfmt::skip]
+    pub fn available<T: Tube>(&self, tubes: &[T]) -> Vec<(usize, usize)> {
+        let mut out = Vec::with_capacity(tubes.len().pow(2));
+        for (i, l) in tubes.iter().enumerate() {
+            for (j, r) in tubes.iter().enumerate() {
+                if i != j // not self
+                    && l.can_move(r) // valid move, impl  !l.empty() + !r.full()
+                    && !(l.homogenous() && r.empty()) // don't move from sorted
+                    && !(l.homogenous() && r.homogenous() && l.count() > r.count()) //
+                    && (l.full() && l.homogenous()) // don't move from full
+                {
+                    out.push((i, j))
+                }
+            }
+        }
+        return out;
+    }
     pub fn win<T: Tube>(&self, tubes: &[T]) -> bool {
         for tube in tubes {
-            if !tube.empty() && (!tube.full() || !tube.sorted()) {
+            if !tube.empty() && (!tube.full() || !tube.homogenous()) {
                 return false;
             }
         }

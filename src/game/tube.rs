@@ -1,21 +1,25 @@
 use std::{
     fmt::{self, Debug, Formatter},
-    mem::swap,
+    mem::{swap, transmute},
 };
 
 pub trait Tube: Default + Debug + Clone {
-    //
+    /// wrapping function for const N size
     fn size() -> usize;
     fn new(raw: &[u8]) -> Self;
     //
+    fn count(&self) -> usize;
+    /// no elements
     fn empty(&self) -> bool;
-    fn sorted(&self) -> bool;
+    /// all the same include empty
+    fn homogenous(&self) -> bool;
+    /// full elements
     fn full(&self) -> bool;
     fn last(&self) -> u8;
     fn pop(&mut self) -> u8;
     fn push(&mut self, other: u8);
-    fn can_move<T: Tube>(&mut self, other: &mut T) -> bool {
-        !self.empty() && !other.full() && self.last() == other.last()
+    fn can_move<T: Tube>(&self, other: &T) -> bool {
+        !self.empty() && !other.full() && (other.empty() || self.last() == other.last())
     }
     fn move_to<T: Tube>(&mut self, other: &mut T) {
         assert!(!self.can_move(other));
@@ -49,20 +53,40 @@ impl Tube for Tube4 {
         Self(raw[0], raw[1], raw[2], raw[3])
     }
 
+    fn count(&self) -> usize {
+        if self.3 != 0 {
+            4
+        }
+        else if self.2 != 0 {
+            3
+        }
+        else if self.1 != 0 {
+            2
+        }
+        else if self.0 != 0 {
+            1
+        }
+        else {
+            0
+        }
+    }
+
     fn empty(&self) -> bool {
         if self.0 == 0 && self.1 == 0 && self.2 == 0 && self.3 == 0 { true } else { false }
     }
 
-    fn sorted(&self) -> bool {
+    fn homogenous(&self) -> bool {
         let a = self.0;
         if a == 0 {
-            false
-        }
-        else if self.1 == a && self.2 == a && self.3 == a {
-            true
+            return true;
         }
         else {
-            false
+            if (self.1 == 0 || self.1 == a) && (self.2 == 0 || self.2 == a) && (self.3 == 0 || self.3 == a) {
+                true
+            }
+            else {
+                false
+            }
         }
     }
 
@@ -82,7 +106,7 @@ impl Tube for Tube4 {
         else if self.1 != 0 {
             return self.1;
         }
-        else if self.1 != 0 {
+        else if self.0 != 0 {
             return self.0;
         }
         unreachable!()
@@ -138,5 +162,12 @@ impl Debug for Tube4 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         // f.debug_tuple("Tube").field(&self.0).field(&self.1).field(&self.2).field(&self.3).finish()
         write!(f, "Tube({}, {}, {}, {})", self.0, self.1, self.2, self.3)
+    }
+}
+
+impl From<u32> for Tube4 {
+    fn from(input: u32) -> Self {
+        let o = unsafe { transmute::<u32, [u8; 4]>(input) };
+        Tube4(o[0], o[1], o[2], o[3])
     }
 }
