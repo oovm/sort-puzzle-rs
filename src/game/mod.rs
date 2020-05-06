@@ -1,3 +1,4 @@
+mod ai;
 mod game;
 mod tube;
 

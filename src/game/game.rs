@@ -30,9 +30,6 @@ impl Game {
         out.append(&mut (0..e).map(|_| T::default()).collect_vec());
         (new, out)
     }
-    pub fn update<T: Tube>(&mut self, _tubes: &mut T) {
-        unimplemented!()
-    }
     pub fn measure<T: Tube>(&self, tubes: &[T]) -> usize {
         let mut score = 0;
         let mut cnt = 1;
@@ -59,26 +56,21 @@ impl Game {
         return score;
     }
 
-    #[rustfmt::skip]
     pub fn available<T: Tube>(&self, tubes: &[T]) -> Vec<(usize, usize)> {
         let mut out = Vec::with_capacity(tubes.len().pow(2));
         for (i, l) in tubes.iter().enumerate() {
             for (j, r) in tubes.iter().enumerate() {
-                if i != j // not self
-                    && l.can_move(r) // valid move, impl  !l.empty() + !r.full()
-                    && !(l.homogenous() && r.empty()) // don't move from sorted
-                    && !(l.homogenous() && r.homogenous() && l.count() > r.count()) //
-                    && (l.full() && l.homogenous()) // don't move from full
-                {
+                if i != j && l.can_move(r) {
                     out.push((i, j))
                 }
             }
         }
         return out;
     }
+
     pub fn win<T: Tube>(&self, tubes: &[T]) -> bool {
         for tube in tubes {
-            if !tube.empty() && (!tube.full() || !tube.homogenous()) {
+            if !tube.empty() && !tube.sorted() {
                 return false;
             }
         }

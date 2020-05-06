@@ -15,3 +15,12 @@ fn test2() {
     println!("{:#?}", state);
     println!("{:#?}", game.available(&state));
 }
+
+
+#[test]
+fn test3() {
+    let (mut game,  mut state) = Game::new::<Tube4>(5, 2);
+    game.next_step(&mut state);
+    println!("{:#?}", state);
+    println!("{:#?}", game.next_step(&mut state));
+}

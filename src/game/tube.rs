@@ -15,6 +15,9 @@ pub trait Tube: Default + Debug + Clone {
     fn homogenous(&self) -> bool;
     /// full elements
     fn full(&self) -> bool;
+    fn sorted(&self) -> bool {
+        self.full() && self.homogenous()
+    }
     fn last(&self) -> u8;
     fn pop(&mut self) -> u8;
     fn push(&mut self, other: u8);
@@ -22,7 +25,7 @@ pub trait Tube: Default + Debug + Clone {
         !self.empty() && !other.full() && (other.empty() || self.last() == other.last())
     }
     fn move_to<T: Tube>(&mut self, other: &mut T) {
-        assert!(!self.can_move(other));
+        assert!(self.can_move(other));
         other.push(self.pop())
     }
 }
@@ -92,6 +95,19 @@ impl Tube for Tube4 {
 
     fn full(&self) -> bool {
         self.3 != 0
+    }
+
+    fn sorted(&self) -> bool {
+        let a = self.0;
+        if a == 0 {
+            false
+        }
+        else if self.1 == a && self.2 == a && self.3 == a {
+            true
+        }
+        else {
+            false
+        }
     }
 
     // Crazy hardcoded
