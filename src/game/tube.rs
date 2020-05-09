@@ -30,7 +30,7 @@ pub trait Tube: Default + Debug + Clone {
     }
 }
 
-#[derive(Default, PartialEq, Eq, Copy, Clone)]
+#[derive(Default, PartialEq, Eq, Copy, Clone,Hash,PartialOrd,Ord)]
 pub struct Tube4(u8, u8, u8, u8);
 pub struct TubeN(Vec<u8>);
 

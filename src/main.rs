@@ -1,9 +1,9 @@
-use sort_puzzle::{Game, Tube4};
+use sort_puzzle::{State};
 
-fn main() {
-    let (mut game, mut state) = Game::new::<Tube4>(8, 2);
-    println!("{:#?}", state);
-    game.solve(&mut state);
-    println!("{:#?}", state);
-    println!("{}", game);
+
+
+fn main(){
+    let new = State::new(12,2);
+    let result = new.dfs_solve();
+    println!("{:#?}", result.unwrap().len())
 }

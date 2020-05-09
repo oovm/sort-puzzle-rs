@@ -1,6 +1,7 @@
 use crate::{Game, Tube};
-use std::collections::BTreeMap;
 use rand::seq::SliceRandom;
+use rand::distributions::{WeightedIndex, Distribution};
+use rand::thread_rng;
 
 impl Game {
     pub fn try_swap<T: Tube>(&mut self, tubes: &[T], swap: (usize, usize)) -> usize {
@@ -63,6 +64,21 @@ impl Game {
         tubes[j] = tr;
         return self.win(tubes)
     }
+
+    pub fn greedy_random_next<T: Tube>(&mut self, tubes: &mut Vec<T>) -> bool {
+        let choices: Vec<(usize, usize)> = self.smart_available(tubes);
+        let weights: Vec<usize> = choices.iter().map(|&e| self.try_swap(tubes, e)).collect();
+        let dist = WeightedIndex::new(&weights).unwrap();
+        let (i, j) = choices[dist.sample(&mut thread_rng())];
+        self.records.push((i, j));
+        let mut tl = tubes[i].clone();
+        let mut tr = tubes[j].clone();
+        tl.move_to(&mut tr);
+        tubes[i] = tl;
+        tubes[j] = tr;
+        return self.win(tubes)
+    }
+
     #[rustfmt::skip]
     pub fn smart_available<T: Tube>(&self, tubes: &[T]) -> Vec<(usize, usize)> {
         let mut out = Vec::with_capacity(tubes.len().pow(2));
@@ -85,7 +101,7 @@ impl Game {
             return;
         }
         for _ in 0..10000 {
-            if self.random_next(tubes) {
+            if self.greedy_random_next(tubes) {
                 return;
             }
             if self.win(tubes) {
@@ -94,4 +110,6 @@ impl Game {
         }
         println!("fail to solve")
     }
+
 }
+
