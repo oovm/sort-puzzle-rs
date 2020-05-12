@@ -1,4 +1,5 @@
 use std::{
+    collections::{BTreeSet},
     fmt::{self, Debug, Formatter},
     mem::{swap, transmute},
 };
@@ -18,6 +19,8 @@ pub trait Tube: Default + Debug + Clone {
     fn sorted(&self) -> bool {
         self.full() && self.homogenous()
     }
+    // different kinds of T
+    fn kinds(&self) -> usize;
     fn last(&self) -> u8;
     fn pop(&mut self) -> u8;
     fn push(&mut self, other: u8);
@@ -30,7 +33,7 @@ pub trait Tube: Default + Debug + Clone {
     }
 }
 
-#[derive(Default, PartialEq, Eq, Copy, Clone,Hash,PartialOrd,Ord)]
+#[derive(Default, PartialEq, Eq, Copy, Clone, Hash, PartialOrd, Ord)]
 pub struct Tube4(u8, u8, u8, u8);
 pub struct TubeN(Vec<u8>);
 
@@ -108,6 +111,23 @@ impl Tube for Tube4 {
         else {
             false
         }
+    }
+
+    fn kinds(&self) -> usize {
+        let mut set = BTreeSet::new();
+        if self.0 != 0 {
+            set.insert(self.0);
+        };
+        if self.1 != 0 {
+            set.insert(self.1);
+        };
+        if self.2 != 0 {
+            set.insert(self.2);
+        };
+        if self.3 != 0 {
+            set.insert(self.3);
+        };
+        return set.len();
     }
 
     // Crazy hardcoded

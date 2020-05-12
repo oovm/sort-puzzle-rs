@@ -1,7 +1,9 @@
 use crate::{Game, Tube};
-use rand::seq::SliceRandom;
-use rand::distributions::{WeightedIndex, Distribution};
-use rand::thread_rng;
+use rand::{
+    distributions::{Distribution, WeightedIndex},
+    seq::SliceRandom,
+    thread_rng,
+};
 
 impl Game {
     pub fn try_swap<T: Tube>(&mut self, tubes: &[T], swap: (usize, usize)) -> usize {
@@ -33,7 +35,7 @@ impl Game {
         tl.move_to(&mut tr);
         tubes[new.0] = tl;
         tubes[new.1] = tr;
-        return self.win(tubes)
+        return self.win(tubes);
     }
 
     pub fn greedy_next<T: Tube>(&mut self, tubes: &mut Vec<T>) -> bool {
@@ -62,7 +64,7 @@ impl Game {
         tl.move_to(&mut tr);
         tubes[i] = tl;
         tubes[j] = tr;
-        return self.win(tubes)
+        return self.win(tubes);
     }
 
     pub fn greedy_random_next<T: Tube>(&mut self, tubes: &mut Vec<T>) -> bool {
@@ -76,7 +78,7 @@ impl Game {
         tl.move_to(&mut tr);
         tubes[i] = tl;
         tubes[j] = tr;
-        return self.win(tubes)
+        return self.win(tubes);
     }
 
     #[rustfmt::skip]
@@ -110,6 +112,4 @@ impl Game {
         }
         println!("fail to solve")
     }
-
 }
-

@@ -4,7 +4,7 @@ use std::iter::repeat;
 
 #[test]
 fn test() {
-    let (game, state) = Game::new::<Tube4>(5, 2);
+    let (game, state) = Game::new::<Tube4>(10, 2);
     println!("{:#?}", state);
     println!("{:#?}", game.measure(&state));
 }
@@ -15,4 +15,3 @@ fn test2() {
     println!("{:#?}", state);
     println!("{:#?}", game.available(&state));
 }
-
