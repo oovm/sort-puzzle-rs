@@ -5,7 +5,7 @@ use pathfinding::{
     prelude::bfs,
 };
 use rand::{seq::SliceRandom, thread_rng};
-use std::{iter::repeat};
+use std::iter::repeat;
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct State(Vec<Tube4>);
@@ -65,8 +65,6 @@ impl State {
     pub fn successor_costs(&self) -> Vec<(State, usize)> {
         self.smart_available().iter().map(|p| self.swap(p)).map(|p| (p, 1)).collect_vec()
     }
-
-
 
     pub fn bfs_solve(&self) -> Option<Vec<State>> {
         bfs(self, |p| p.successors(), |p| p.win())

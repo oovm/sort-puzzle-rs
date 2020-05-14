@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeSet},
+    collections::BTreeSet,
     fmt::{self, Debug, Formatter},
     mem::{swap, transmute},
 };

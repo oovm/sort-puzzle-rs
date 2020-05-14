@@ -1,6 +1,4 @@
-use itertools::Itertools;
 use sort_puzzle::{Game, Tube4};
-use std::iter::repeat;
 
 #[test]
 fn test() {
